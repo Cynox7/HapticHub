@@ -85,6 +85,17 @@ teleportButton.Size = UDim2.new(0,130,0,30)
 teleportButton.Position = UDim2.new(0,10,0,75)
 teleportButton.Parent = frame
 
+local speedButton = Instance.new("TextButton")
+speedButton.Text = "Speed"
+speedButton.Font = Enum.Font.SourceSans
+speedButton.TextSize = 16
+speedButton.TextColor3 = Color3.fromRGB(255,255,255)
+speedButton.BackgroundColor3 = Color3.fromRGB(51,51,51)
+speedButton.BorderSizePixel = 0
+speedButton.Size = UDim2.new(0,130,0,30)
+speedButton.Position = UDim2.new(0,10,0,115)
+speedButton.Parent = frame
+
 local dragging = false
 local dragInput, dragStart, startPos
 
@@ -110,15 +121,14 @@ end)
 UserInputService.InputChanged:Connect(function(input)
     if dragging and input == dragInput then
         local delta = input.Position - dragStart
-        local newPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        frame.Position = newPos
-        gearIcon.Position = UDim2.new(0, newPos.X.Offset + title.Size.X.Offset + 5, 0, newPos.Y.Offset + 3)
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        gearIcon.Position = UDim2.new(0, frame.Position.X.Offset + title.Size.X.Offset + 5, 0, frame.Position.Y.Offset + 3)
         madeByLabel.Position = UDim2.new(0, 10, 1, -25)
     end
 end)
 
 local moonGravityEnabled = false
-local connection
+local gravityConnection
 
 local function resetGravity()
     local character = Players.LocalPlayer.Character
@@ -144,10 +154,10 @@ gravityButton.MouseButton1Click:Connect(function()
             if humanoid and root then
                 humanoid.UseJumpPower = true
                 humanoid.JumpPower = 96
-                if connection then connection:Disconnect() end
-                connection = RunService.Stepped:Connect(function()
+                if gravityConnection then gravityConnection:Disconnect() end
+                gravityConnection = RunService.Stepped:Connect(function()
                     if not moonGravityEnabled then
-                        connection:Disconnect()
+                        gravityConnection:Disconnect()
                         resetGravity()
                         return
                     end
@@ -160,9 +170,9 @@ gravityButton.MouseButton1Click:Connect(function()
     else
         gravityButton.BackgroundColor3 = Color3.fromRGB(51,51,51)
         stateLabel.Text = "OFF"
-        if connection then
-            connection:Disconnect()
-            connection = nil
+        if gravityConnection then
+            gravityConnection:Disconnect()
+            gravityConnection = nil
         end
         resetGravity()
     end
@@ -187,6 +197,52 @@ teleportButton.MouseButton1Click:Connect(function()
     end
 end)
 
+local speedEnabled = false
+local speedConnection
+
+speedButton.MouseButton1Click:Connect(function()
+    speedEnabled = not speedEnabled
+    if speedEnabled then
+        speedButton.BackgroundColor3 = Color3.fromRGB(80,80,80)
+        local SpeedValue = 50
+        local player = Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local root = character:WaitForChild("HumanoidRootPart")
+        local camera = workspace.CurrentCamera
+        if speedConnection then speedConnection:Disconnect() end
+        speedConnection = RunService.RenderStepped:Connect(function()
+            if not speedEnabled then
+                speedConnection:Disconnect()
+                speedConnection = nil
+                return
+            end
+            local moveVector = Vector3.zero
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                moveVector += camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                moveVector -= camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                moveVector -= camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                moveVector += camera.CFrame.RightVector
+            end
+            if moveVector.Magnitude > 0 then
+                moveVector = moveVector.Unit * SpeedValue
+            end
+            root.AssemblyLinearVelocity = Vector3.new(moveVector.X, root.AssemblyLinearVelocity.Y, moveVector.Z)
+        end)
+    else
+        speedButton.BackgroundColor3 = Color3.fromRGB(51,51,51)
+        if speedConnection then
+            speedConnection:Disconnect()
+            speedConnection = nil
+        end
+    end
+end)
+
 local uiVisible = true
 
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
@@ -197,11 +253,19 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
                 moonGravityEnabled = false
                 gravityButton.BackgroundColor3 = Color3.fromRGB(51,51,51)
                 stateLabel.Text = "OFF"
-                if connection then
-                    connection:Disconnect()
-                    connection = nil
+                if gravityConnection then
+                    gravityConnection:Disconnect()
+                    gravityConnection = nil
                 end
                 resetGravity()
+            end
+            if speedEnabled then
+                speedEnabled = false
+                speedButton.BackgroundColor3 = Color3.fromRGB(51,51,51)
+                if speedConnection then
+                    speedConnection:Disconnect()
+                    speedConnection = nil
+                end
             end
             frame.Visible = false
             uiVisible = false
