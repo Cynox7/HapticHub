@@ -34,7 +34,7 @@ title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = frame
 
 local madeByLabel = Instance.new("TextLabel")
-madeByLabel.Text = "Made By Haptic"
+madeByLabel.Text = "Made By Cynox"
 madeByLabel.Font = Enum.Font.SourceSans
 madeByLabel.TextSize = 12
 madeByLabel.TextColor3 = Color3.fromRGB(150,150,150)
@@ -136,7 +136,7 @@ local function resetGravity()
         local humanoid = character:FindFirstChildWhichIsA("Humanoid")
         local root = character:FindFirstChild("HumanoidRootPart")
         if humanoid and root then
-            humanoid.JumpPower = 50
+            humanoid.JumpPower = 80
             root.Velocity = Vector3.new(root.Velocity.X, 0, root.Velocity.Z)
         end
     end
@@ -153,7 +153,7 @@ gravityButton.MouseButton1Click:Connect(function()
             local root = character:FindFirstChild("HumanoidRootPart")
             if humanoid and root then
                 humanoid.UseJumpPower = true
-                humanoid.JumpPower = 96
+                humanoid.JumpPower = 180
                 if gravityConnection then gravityConnection:Disconnect() end
                 gravityConnection = RunService.Stepped:Connect(function()
                     if not moonGravityEnabled then
@@ -204,7 +204,7 @@ speedButton.MouseButton1Click:Connect(function()
     speedEnabled = not speedEnabled
     if speedEnabled then
         speedButton.BackgroundColor3 = Color3.fromRGB(80,80,80)
-        local SpeedValue = 50
+        local SpeedValue = 120
         local player = Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local root = character:WaitForChild("HumanoidRootPart")
