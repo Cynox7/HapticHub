@@ -136,7 +136,7 @@ local function resetGravity()
         local humanoid = character:FindFirstChildWhichIsA("Humanoid")
         local root = character:FindFirstChild("HumanoidRootPart")
         if humanoid and root then
-            humanoid.JumpPower = 50
+            humanoid.JumpPower = 30
             root.Velocity = Vector3.new(root.Velocity.X, 0, root.Velocity.Z)
         end
     end
@@ -204,7 +204,7 @@ speedButton.MouseButton1Click:Connect(function()
     speedEnabled = not speedEnabled
     if speedEnabled then
         speedButton.BackgroundColor3 = Color3.fromRGB(80,80,80)
-        local SpeedValue = 50
+        local SpeedValue = 30
         local player = Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local root = character:WaitForChild("HumanoidRootPart")
