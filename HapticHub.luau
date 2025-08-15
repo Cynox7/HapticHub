@@ -136,7 +136,7 @@ local function resetGravity()
         local humanoid = character:FindFirstChildWhichIsA("Humanoid")
         local root = character:FindFirstChild("HumanoidRootPart")
         if humanoid and root then
-            humanoid.JumpPower = 80
+            humanoid.JumpPower = 50
             root.Velocity = Vector3.new(root.Velocity.X, 0, root.Velocity.Z)
         end
     end
@@ -153,7 +153,7 @@ gravityButton.MouseButton1Click:Connect(function()
             local root = character:FindFirstChild("HumanoidRootPart")
             if humanoid and root then
                 humanoid.UseJumpPower = true
-                humanoid.JumpPower = 180
+                humanoid.JumpPower = 76
                 if gravityConnection then gravityConnection:Disconnect() end
                 gravityConnection = RunService.Stepped:Connect(function()
                     if not moonGravityEnabled then
